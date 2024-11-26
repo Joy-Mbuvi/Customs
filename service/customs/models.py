@@ -2,6 +2,7 @@ from django.db import models
 
 class Customers (models.Model):
     name= models.CharField(max_length=100)
+    phone_number=models.CharField(max_length=10,blank=False,default='0000000000')
     code =models.IntegerField()
 
 class Order(models.Model):
