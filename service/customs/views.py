@@ -5,16 +5,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import redirect,render
 from .models import Customers, Order
 from .serializers import CustomerSerializer, OrderSerializer
-from django.conf import settings
-import africastalking
+# import africastalking
 
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 
-def custom_login_redirect(request):
-    if request.user.is_authenticated:
-        return redirect('/customers/')  # Redirect to customers view
 
 class All_customers(APIView):
     permission_classes = [IsAuthenticated]
@@ -30,7 +26,7 @@ class All_customers(APIView):
 
 class Create_customers(APIView):
     permission_classes = [AllowAny]
-    required_scopes = ['write']
+    required_scopes = ['write', 'read']
 
     def post(self, request):
         try:
