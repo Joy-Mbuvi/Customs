@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Customer</title>
+</head>
+<body>
+    <form method="POST" action="http://localhost:8000/customs/customers/new/">
+        <input type="text" name="name" placeholder="Enter Name" required>
+        <input type="number" name="phone_number" placeholder="Enter phone_number" required>
+        <input type="number" name="code" placeholder="Enter code" required>
+
+        <button type="submit">Create Customer</button>
+    </form>
+</body>
+</html>
