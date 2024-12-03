@@ -7,9 +7,8 @@ from django.shortcuts import redirect,render
 from .models import Customers, Order
 from .serializers import CustomerSerializer, OrderSerializer
 from django.conf import settings
-from django.http import HttpResponseRedirect
 import requests
-import africastalking
+from .send_sms import Sendsms
 
 def dashboard(request):
     return render(request, 'dashboard.html')
@@ -24,22 +23,21 @@ class Create_customers(APIView):
         try:
             serializer = CustomerSerializer(data=request.data)
             if serializer.is_valid():
-             serializer.save()
+                serializer.save()
 
+                # Now return a Response to indicate success
+                client_id = settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id']
+                redirect_url = f"https://accounts.google.com/o/oauth2/auth" \
+                               f"?client_id={client_id}" \
+                               f"&redirect_uri=http://localhost:8000/customs/customers/google/callback/" \
+                               f"&response_type=code&scope=openid profile email"
+                
+                return redirect(redirect_url)
 
-             client_id = settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id']
-             return redirect(
-                    f"https://accounts.google.com/o/oauth2/auth"
-                    f"?client_id={client_id}"
-                    f"&redirect_uri=http://localhost:8000/customs/customers/google/callback/"
-                    f"&response_type=code&scope=openid profile email"
-                )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        
-
-
-        except:   return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GoogleOAuthCallback(APIView):
@@ -57,30 +55,37 @@ class GoogleOAuthCallback(APIView):
             'grant_type': 'authorization_code',
         }
         response = requests.post(token_url, data=data)
-        # print("Token response status:", response.status_code)
 
         token_data = response.json()
-        # print ('token response data',token_data)
+
+        # if 'error' in token_data:
+        #     return Response(
+        #         {'error': token_data['error'], 'description': token_data['error_description']},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
+
+
         access_token = token_data['access_token']
-        print(f"Access Token: {access_token}")  
+        if not access_token:
+                return Response(
+                    {'error': 'Failed to obtain access token', 'details': token_data},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        
+        token_info_url = f"https://oauth2.googleapis.com/tokeninfo?access_token={access_token}"
+        token_info_response = requests.get(token_info_url)
 
-        user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
-        headers = {'Authorization': f'Bearer {access_token}'}
-        user_info_response = requests.get(user_info_url, headers=headers)
+        email = token_info_response.json().get('email')
+        # print(f"Email: {email}")
+        user, created = Customers.objects.get_or_create(email=email)
 
-        auhenticated_customer=user_info_response.json()
-        name= auhenticated_customer.get('name')
+        refresh = RefreshToken.for_user(user)
+        jwt_access_token = str(refresh.access_token)
 
-
-        customer= Customers.objects.get(name=name)
-
-        refresh=RefreshToken.for_user(customer)
-
-        return  Response({
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-        })
-
+        return Response(
+            {'access_token': access_token, 'jwt_access_token': jwt_access_token},
+            status=status.HTTP_200_OK
+        )
 
 
 
@@ -111,30 +116,40 @@ class All_order(APIView):
         
 
 
-africastalking.initialize(settings.AFRICASTALKING_USERNAME, settings.AFRICASTALKING_API_KEY)
-sms = africastalking.SMS
 class Create_orders(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
             customer_id = request.data.get('customer')
             customer = Customers.objects.get(id=customer_id)
-            request.data['customer'] = customer.id  
             serializer = OrderSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                order=serializer.save()
 
 
-                message = f"Dear {customer.name}, your order has been placed successfully. Thank you for shopping with us!"
+                message = f"Dear {customer.name}, your order #{order.id} has been placed successfully. Thank you for shopping with us!"
                 phone_number = customer.phone_number
 
-                response = sms.send(message, [phone_number])
+                sms_sender=Sendsms()
+                try:
+                 response = sms_sender.send(message, [phone_number])
 
-                if response:
+                 if response:
                     return Response({'message': 'Order created and SMS sent successfully'}, status=status.HTTP_201_CREATED)
-                else:
-                    return Response({'error': 'Order created, but SMS sending failed'}, status=status.HTTP_400_BAD_REQUEST)
+                 else:
+                       return Response(
+                            {'warning': 'Order created, but SMS sending failed'},
+                            status=status.HTTP_201_CREATED,
+                        )
+
+                except Exception as sms_error:
+                    return Response(
+                        {
+                            'warning': 'Order created successfully, but an error occurred while sending SMS.' ,'sms_error': str(sms_error),
+                        },
+                        status=status.HTTP_201_CREATED,
+                    )
 
         except Customers.DoesNotExist:
             return Response({'error': 'Customer does not exist'}, status=status.HTTP_404_NOT_FOUND)

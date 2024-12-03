@@ -2,13 +2,14 @@ from django.db import models
 
 class Customers (models.Model):
     name= models.CharField(max_length=100)
-    phone_number=models.CharField(max_length=10,blank=False,default='0000000000')
-    code =models.IntegerField()
+    email= models.EmailField(blank=True,null=True,unique=True)
+    code=models.IntegerField( default=33227)
+    phone_number=models.CharField(max_length=15, unique=True, blank=True, null=True)
 
 class Order(models.Model):
-    customer= models.ForeignKey(Customers,on_delete=models.CASCADE)
-    Items= models.TextField(max_length=200)
-    amount= models.DecimalField(max_digits=10,decimal_places=2)
-    time= models.TimeField(auto_now_add=True)
+    customer = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    Items = models.TextField(max_length=200)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    time = models.TimeField(auto_now_add=True)
 
 

@@ -6,9 +6,17 @@
     <title>Create Customer</title>
 </head>
 <body>
+
+    <h1>Welcome to your sign in!</h1>
+    <p>This is where you can create your customer account .</p>
+
     <form method="POST" action="http://localhost:8000/customs/customers/new/">
         <input type="text" name="name" placeholder="Enter Name" required>
-        <input type="number" name="phone_number" placeholder="Enter phone_number" required>
+        <br>
+        <input type="number" name="phone_number" placeholder="start with +254.." required>
+        <br>
+        <input type="email" name="email" placeholder="Enter email" required>
+        <br>
         <input type="number" name="code" placeholder="Enter code" required>
 
         <button type="submit">Create Customer</button>
