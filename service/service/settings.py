@@ -125,10 +125,7 @@ REST_FRAMEWORK = {
     # Use JWT Authentication (instead of OAuth2)
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-         'rest_framework.permissions.IsAuthenticated',  # Ensure the user is authenticated
-    ],
+    ]
 }
 
 SIMPLE_JWT = {
