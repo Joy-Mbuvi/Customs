@@ -2,7 +2,7 @@ from django.db import models
 
 class Customers (models.Model):
     name= models.CharField(max_length=100)
-    email= models.EmailField(blank=True,null=True,unique=True)
+    email= models.EmailField(blank=False,null=True,unique=True)
     code=models.IntegerField( default=33227)
     phone_number=models.CharField(max_length=15, unique=True, blank=True, null=True)
 

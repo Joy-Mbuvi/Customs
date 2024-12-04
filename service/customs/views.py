@@ -10,8 +10,8 @@ from django.conf import settings
 import requests
 from .send_sms import Sendsms
 
-def dashboard(request):
-    return render(request, 'dashboard.html')
+def login(request):
+    return render(request, 'login.html')
 
 def create_customer_page(request):
     return render(request, 'create_customer.html')
@@ -25,7 +25,6 @@ class Create_customers(APIView):
             if serializer.is_valid():
                 serializer.save()
 
-                # Now return a Response to indicate success
                 client_id = settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id']
                 redirect_url = f"https://accounts.google.com/o/oauth2/auth" \
                                f"?client_id={client_id}" \
@@ -76,21 +75,28 @@ class GoogleOAuthCallback(APIView):
         token_info_response = requests.get(token_info_url)
 
         email = token_info_response.json().get('email')
-        # print(f"Email: {email}")
-        user, created = Customers.objects.get_or_create(email=email)
+    
+        user = Customers.objects.get(email=email)
+
+        return redirect('http://127.0.0.1:8000/customs/login/')
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        email = request.data.get('email')
+        user = Customers.objects.filter(email=email).first()
+
+        if not user:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         refresh = RefreshToken.for_user(user)
         jwt_access_token = str(refresh.access_token)
 
-        return Response(
-            {'access_token': access_token, 'jwt_access_token': jwt_access_token},
-            status=status.HTTP_200_OK
-        )
-
+        return Response({'jwt_access_token': jwt_access_token}, status=status.HTTP_200_OK)
 
 
 class All_customers(APIView):
-    # permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated] 
 
     def get(self, request):
 
@@ -104,7 +110,7 @@ class All_customers(APIView):
 
 
 class All_order(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, customer_id):
         try:
@@ -117,7 +123,7 @@ class All_order(APIView):
 
 
 class Create_orders(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:

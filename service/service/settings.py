@@ -116,8 +116,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
-# Django REST Framework
-# settings.py
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000'
+]
+
 
 REST_FRAMEWORK = {
     # Use JWT Authentication (instead of OAuth2)
@@ -125,17 +127,16 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.IsAuthenticated',  # Ensure the user is authenticated
+         'rest_framework.permissions.IsAuthenticated',  # Ensure the user is authenticated
     ],
 }
 
-# JWT Authentication
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-#     'ROTATE_REFRESH_TOKENS': True,
-#     'BLACKLIST_AFTER_ROTATION': True,
-# }
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
 
 # CORS Configuration (if required)
 CORS_ORIGIN_ALLOW_ALL = True
