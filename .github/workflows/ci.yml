@@ -28,20 +28,17 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r service/requirements.txt
+      - name: Write .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Run Tests
         env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          AFRICASTALKING_USERNAME: ${{ secrets.AFRICASTALKING_USERNAME }}
-          AFRICASTALKING_API_KEY: ${{ secrets.AFRICASTALKING_API_KEY}}
-
+          ENV_FILE: .env
         run: |
           source venv/bin/activate
           cd service
-          python3 manage.py test  --keepdb 
-
+          python3 manage.py test --keepdb --verbosity=2
       - name: Lint Code
         run: |
           source venv/bin/activate
