@@ -1,4 +1,4 @@
-name: Backend CI Workflow
+ name: Backend CI Workflow
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
       - name: Run Tests
         run: |
           source venv/bin/activate
-          python manage.py test --keepdb
+          python3 manage.py test --keepdb
 
       - name: Lint Code
         run: |
