@@ -73,13 +73,10 @@ class GoogleOAuthCallback(APIView):
         try:
             user, created = User.objects.get_or_create(username=email, email=email)
             if created:
-                # Create a Customers instance if it's a new user
                 Customers.objects.create(user=user, email=email)
 
         except IntegrityError:
-            # Handle the case where email already exists
             user = User.objects.get(email=email)
-            # Optionally, update other fields of the customer if needed
             customer, _ = Customers.objects.get_or_create(user=user)
 
         refresh = RefreshToken.for_user(user)

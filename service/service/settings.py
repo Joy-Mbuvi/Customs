@@ -120,7 +120,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 REST_FRAMEWORK = {
-    # Use JWT Authentication (instead of OAuth2)
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
     ],
