@@ -67,6 +67,7 @@ python3 venv env
 ## Testing
 
 Automated tests are written to ensure that customer registration, Google OAuth authentication, and order placements work correctly. These tests are run automatically as part of the CI pipeline.
+
 ## License
 
 This project is licensed under the MIT License 
