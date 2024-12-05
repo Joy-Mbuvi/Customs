@@ -38,7 +38,7 @@ class APITestCase(TestCase):
     def test_create_order(self):
         response = self.client.post('/customs/orders/new/', self.order_data, format='json')
         self.assertEqual(response.status_code, 201)
-        self.assertIn('message', response.data)
+        self.assertIn('warning', response.data)
         self.assertTrue(Order.objects.filter(customer=self.customer).exists())
 
     def test_create_customer(self):
