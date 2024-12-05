@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - master
+      
   pull_request:
     branches:
       - master
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  
 
     steps:
       - name: Checkout Code
@@ -19,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10'  
 
       - name: Install Dependencies
         run: |
@@ -28,20 +29,25 @@ jobs:
           pip install --upgrade pip
           pip install -r service/requirements.txt
 
-      - name: Write .env file
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-
       - name: Run Tests
         env:
-          DJANGO_SETTINGS_MODULE: service.settings
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          AFRICASTALKING_USERNAME: ${{ secrets.AFRICASTALKING_ }}
+          AFRICASTALKING_API_KEY: ${{ secrets.AFRICASTALKING_API_KEY}}
+          DB_HOST : ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+
         run: |
           source venv/bin/activate
           cd service
-          python3 manage.py test --keepdb --verbosity=2
+          python3 manage.py test  --keepdb 
 
       - name: Lint Code
         run: |
           source venv/bin/activate
-          flake8 .
-
+          flake8 .  
