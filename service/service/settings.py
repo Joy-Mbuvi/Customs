@@ -29,9 +29,9 @@ INSTALLED_APPS = [
     'rest_framework',  
     'customs',
     'oauth2_provider',
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     "allauth.socialaccount.providers.google",
     'rest_framework_simplejwt',
 ]
