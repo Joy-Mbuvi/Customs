@@ -36,9 +36,7 @@ The app's Continuous Integration (CI) is managed using GitHub Pages, while Conti
 ### Local Development
 
 1. Clone this repository:
-   ```bash
    git clone https://github.com/yourusername/yourrepository.git
-   ```
 
 2. Install dependencies:
    ```bash
