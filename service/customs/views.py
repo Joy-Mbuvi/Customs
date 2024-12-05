@@ -13,9 +13,6 @@ from django.db import IntegrityError
 
 from .send_sms import Sendsms
 
-def dashboard(request):
-    return render(request, 'dashboard.html')
-
 def create_customer_page(request):
     return render(request, 'create_customer.html')
 
