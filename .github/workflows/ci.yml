@@ -30,10 +30,12 @@ jobs:
           pip install -r service/requirements.txt
 
       - name: Run Tests
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           source venv/bin/activate
           cd service
-          python3 manage.py test --keepdb
+          python3 manage.py test  --keepdb 
 
       - name: Lint Code
         run: |
