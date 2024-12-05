@@ -36,21 +36,19 @@ The app's Continuous Integration (CI) is managed using GitHub Pages, while Conti
 ### Local Development
 
 1. Clone this repository:
-   git clone https://github.com/yourusername/yourrepository.git
+   git clone https://github.com/Joy-Mbuvi/Customs.git
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+2. create an enviroments:
+python3 venv env
 
-3. Set up environment variables for Google OAuth and Africa's Talking API in the `.env` file.
 
-4. Run the local development server:
-   ```bash
-   npm start
-   ```
+3. Install the requirements
+ pip install -r requirements.txt
 
-5. Navigate to `http://localhost/custos/create` to create a new customer. Follow the prompts to authenticate via Google, and obtain your JWT token after a successful login.
+ 4. Run the application
+ python3 manage.py runserver
+
+5. Navigate to `http://localhost/customs/create` to create a new customer. Follow the prompts to authenticate via Google, and obtain your JWT token after a successful login.
 
 ### Continuous Integration & Deployment
 
@@ -60,25 +58,17 @@ The app's Continuous Integration (CI) is managed using GitHub Pages, while Conti
 
 ## API Endpoints
 
-- `POST /custos/create`: Create a new customer and redirect to Google for authentication.
+- `POST /customs/create`: Create a new customer and redirect to Google for authentication.
 - `GET /auth/google`: Redirect to Google OAuth for login.
-- `POST /auth/token`: Retrieve the JWT token after successful Google sign-in.
-- `POST /orders`: Allow customers to place an order for any available product.
+- `POST /customs/orders/new/`: Allow customers to place an order for any available product.
+- 'GET/customs/orders/<int:customer_id>/': Get all orders associated with the customer.
+-'GET/customs/customers/: fetches all the customers
 
 ## Testing
 
 Automated tests are written to ensure that customer registration, Google OAuth authentication, and order placements work correctly. These tests are run automatically as part of the CI pipeline.
-
-## Environment Setup
-
-1. **Google OAuth**: Configure the application with your Google OAuth credentials.
-2. **Africa's Talking API**: Use the sandbox environment for testing and configure the API keys in your environment.
-3. **PostgreSQL Database**: Ensure that PostgreSQL is set up locally or remotely for data storage.
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License 
 
----
 
-Feel free to modify or expand on this README based on any other specific details or customizations for your project.
