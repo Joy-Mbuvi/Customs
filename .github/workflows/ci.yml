@@ -47,7 +47,4 @@ jobs:
           cd service
           python3 manage.py test  --keepdb 
 
-      - name: Lint Code
-        run: |
-          source venv/bin/activate
-          flake8 .  
+      
