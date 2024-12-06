@@ -1,17 +1,11 @@
 import os
 from datetime import timedelta
-import environ
-
-env = environ.Env()
-environ.Env.read_env() 
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRET_KEY = env('SECRET_KEY')  
-
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -26,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  
+    'rest_framework',
     'customs',
     'oauth2_provider',
     'allauth',
@@ -35,18 +29,17 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     'rest_framework_simplejwt',
 ]
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': env('GOOGLE_CLIENT_ID'),
-            'secret': env('GOOGLE_CLIENT_SECRET'),
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
         }
     }
 }
 
-LOGIN_REDIRECT_URL= 'http://localhost:8000/customs/customers/google/callback/'
-
-
+LOGIN_REDIRECT_URL = 'http://localhost:8000/customs/customers/google/callback/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,26 +70,25 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'service.wsgi.application'
 
+# Africastalking Credentials
+AFRICASTALKING_USERNAME = os.environ.get('AFRICASTALKING_USERNAME')
+AFRICASTALKING_API_KEY = os.environ.get('AFRICASTALKING_API_KEY')
 
-
-AFRICASTALKING_USERNAME = env('AFRICASTALKING_USERNAME')
-AFRICASTALKING_API_KEY = env('AFRICASTALKING_API_KEY')
-# Database
+# Database Configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),         
-        'USER': env('DB_USER'),         
-        'PASSWORD': env('DB_PASSWORD'), 
-        'HOST': env('DB_HOST', default='localhost'), 
-        'PORT': env('DB_PORT')
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),  # Default to localhost
+        'PORT': os.environ.get('DB_PORT', '5432'),       # Default to 5432 for PostgreSQL
     }
 }
 
-# Password validation
+# Password Validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -111,21 +103,20 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static Files
 STATIC_URL = '/static/'
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000'
 ]
 
-
-
+# REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-         'rest_framework.permissions.IsAuthenticated',  # Ensure the user is authenticated
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -136,6 +127,6 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-# CORS Configuration (if required)
+# CORS Configuration
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
