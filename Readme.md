@@ -54,7 +54,7 @@ python3 venv env
 
 - **CI (GitHub Pages)**: The project is set up with GitHub Pages for automated CI workflows. Every change pushed to the repository triggers the build process and updates the GitHub Pages site.
 
-- **CD (Elastic Beanstalk)**: The project is deployed using AWS Elastic Beanstalk, automatically deploying new changes to the cloud after successful CI.
+- **CD (Elastic Beanstalk)**: The project is deployed using pythonanywhere
 
 ## API Endpoints
 
