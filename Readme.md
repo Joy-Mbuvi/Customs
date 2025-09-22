@@ -4,7 +4,6 @@ PROJECT NAME : CUSTOMS
 
 This project involves a web application that allows customers to create an account, authenticate using Google, and receive a JWT token for secure access to the platform. The application integrates with the Africa's Talking API in a test environment (sandbox mode) for processing orders. The project uses PostgreSQL as the database to manage customer data and orders.
 
-The app's Continuous Integration (CI) is managed using GitHub Pages, while Continuous Deployment (CD) is handled through AWS Elastic Beanstalk. The customer ordering system allows users to place orders for products, and the backend is structured to support scalability and security with JWT authentication.
 
 ## Features
 
