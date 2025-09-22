@@ -17,11 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from oauth2_provider.urls import urlpatterns as oauth2_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('customs/' ,include('customs.urls')),
-    path('oauth/', include(oauth2_urls)), 
     path('accounts/', include('allauth.urls')),
 ]

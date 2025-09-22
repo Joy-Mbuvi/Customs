@@ -16,74 +16,38 @@ from .send_sms import Sendsms
 def create_customer_page(request):
     return render(request, 'create_customer.html')
 
-class Create_customers(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request):
-        try:
-            serializer = CustomerSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
+class Google_sign(APIView):
+    permission_classes =[AllowAny]
 
-                # Now return a Response to indicate success
-                client_id = settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id']
-                redirect_url = f"https://accounts.google.com/o/oauth2/auth" \
-                               f"?client_id={client_id}" \
-                               f"&redirect_uri=http://localhost:8000/customs/customers/google/callback/" \
-                               f"&response_type=code&scope=openid profile email"
-                
-                return redirect(redirect_url)
+    def get(self,request):
+        return redirect('/accounts/google/login/')
 
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class Get_Jwt(APIView):
+    permission_classes =[AllowAny]
 
 
+    def get(self,request):
+        if request.user.is_authenticated:
+            refresh=RefreshToken.for_user(request.user)
+            return Response({
+                'access':str(refresh.access_token),
+                'refresh': str(refresh)
+            })
+        return Response({'error': 'Not authenticated'}, status=401)
 
-class GoogleOAuthCallback(APIView):
-    permission_classes = [AllowAny]
+    
+class New_customer(APIView):
+    permission_classes =[AllowAny]
 
-    def get(self, request):
-        code = request.GET.get('code')
+    def post(self,request):
+        serializer= CustomerSerializer(data=request.data)
+        if serializer is_valid():
+            customer= serializer.save()
+            return Response({'message':'User created successfully',status=201})
+        return Response(serializer.errors, status=400)
 
-        token_url = "https://oauth2.googleapis.com/token"
-        data = {
-            'code': code,
-            'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
-            'client_secret': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['secret'],
-            'redirect_uri': settings.LOGIN_REDIRECT_URL,
-            'grant_type': 'authorization_code',
-        }
-        response = requests.post(token_url, data=data)
-        token_data = response.json()
-
-        access_token = token_data.get('access_token')
-        if not access_token:
-            return Response(
-                {'error': 'Failed to obtain access token', 'details': token_data},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        token_info_url = f"https://oauth2.googleapis.com/tokeninfo?access_token={access_token}"
-        token_info_response = requests.get(token_info_url)
-        email = token_info_response.json().get('email')
-
-        # Try to get the user or create if they don't exist
-        try:
-            user, created = User.objects.get_or_create(username=email, email=email)
-            if created:
-                Customers.objects.create(user=user, email=email)
-
-        except IntegrityError:
-            user = User.objects.get(email=email)
-            customer, _ = Customers.objects.get_or_create(user=user)
-
-        refresh = RefreshToken.for_user(user)
-        jwt_access_token = str(refresh.access_token)
-
-        return Response({'jwt_access_token': jwt_access_token}, status=status.HTTP_200_OK)
-
+        
 
 class All_customers(APIView):
     permission_classes = [IsAuthenticated] 
